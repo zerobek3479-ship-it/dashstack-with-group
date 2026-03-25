@@ -1,20 +1,14 @@
-import { useState } from 'react'
-import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import './DashStackOne.css'
 import CustomersRingChart from './theme/CustomersRingChart'
 import RevenueChart from './theme/RevenueChart'
 import SalesAnalyticsChart from './theme/SalesAnalyticsChart'
 import SalesDetailsChart from './theme/SalesDetailsChart'
-
-function PlaceholderPage() {
-  return (
-    <section className="dashstack-placeholder">
-      <div className="dashstack-placeholder-empty" />
-    </section>
-  )
-}
-
+import { dashstackPages, dashstackSidebarItems } from '../dashstackPages'
+import DashStackTwentySix from './DashStackTwentySix'
+import DashStackTwentySeven from './DashStackTwentySeven'
+import DashStackTwentyNine from './DashStackTwentyNine'
 
 function DashboardContent({ stats }) {
   return (
@@ -128,108 +122,165 @@ function DashboardContent({ stats }) {
   )
 }
 
-const pagePathMap = {
-  dashboard: '/',
-  Pricing: '/pricing',
-  Calendar: '/calendar',
-  'To-Do': '/to-do',
-  Contact: '/contact',
-  Invoice: '/invoice',
-  'UI Elements': '/ui-elements',
-  Team: '/team',
-  Table: '/table',
-}
-
-function DashStackOne({ activeTab: routeTab = 'dashboard', dashboardData }) {
+function DashStackOne({ dashboardData }) {
+  const location = useLocation()
   const navigate = useNavigate()
-  const [activeTab, setActiveTab] = useState(routeTab)
+  const { stats = [] } = dashboardData ?? {}
+  const activePath = location.pathname
+  const [showOnboarding, setShowOnboarding] = useState(false)
+  const [introStep, setIntroStep] = useState('sign-in')
+  const [loginForm, setLoginForm] = useState({ email: '', password: '' })
+  const [signUpForm, setSignUpForm] = useState({ email: '', username: '', password: '' })
+  const [rememberPassword, setRememberPassword] = useState(false)
+  const [acceptedTerms, setAcceptedTerms] = useState(false)
+  const currentItem = dashstackSidebarItems.find((item) => item.path === activePath)
+  const pageTitle = currentItem?.label ?? 'Dashboard'
+  const currentPage = dashstackPages.find((page) => page.path === activePath)
+  const ActivePageComponent = currentPage?.component ?? null
 
   useEffect(() => {
-    setActiveTab(routeTab)
-  }, [routeTab])
+    const hasVisited = window.localStorage.getItem('dashstack-onboarding-complete')
 
-  const isDashboard = activeTab === 'dashboard'
-  const pageTitle = activeTab === 'dashboard' ? 'Dashboard' : activeTab
-  const { navItems = [], pageItems = [], stats = [] } = dashboardData ?? {}
+    if (!hasVisited) {
+      setShowOnboarding(true)
+      setIntroStep('sign-in')
+    }
+  }, [])
 
-  const handleTabChange = (nextTab) => {
-    setActiveTab(nextTab)
-    navigate(pagePathMap[nextTab] ?? '/')
+  const handleTabChange = (path) => {
+    navigate(path)
+  }
+
+  const updateLoginField = (field, value) => {
+    setLoginForm((current) => ({ ...current, [field]: value }))
+  }
+
+  const updateSignUpField = (field, value) => {
+    setSignUpForm((current) => ({ ...current, [field]: value }))
+  }
+
+  const finishOnboarding = () => {
+    window.localStorage.setItem('dashstack-onboarding-complete', 'true')
+    setShowOnboarding(false)
+    navigate('/')
+  }
+
+  const handleSignIn = () => {
+    window.prompt('Sign In', `Email: ${loginForm.email || 'guest@example.com'}`)
+    finishOnboarding()
+  }
+
+  const handleSignUp = () => {
+    window.prompt('Sign Up', `Username: ${signUpForm.username || 'new-user'}`)
+    finishOnboarding()
+  }
+
+  const renderMainContent = () => {
+    if (showOnboarding) {
+      if (introStep === 'sign-up') {
+        return (
+          <DashStackTwentySeven
+            formValues={signUpForm}
+            acceptedTerms={acceptedTerms}
+            onFieldChange={updateSignUpField}
+            onAcceptedTermsChange={setAcceptedTerms}
+            onGoToSignIn={() => setIntroStep('sign-in')}
+            onSignUp={handleSignUp}
+          />
+        )
+      }
+
+      if (introStep === 'not-found') {
+        return <DashStackTwentyNine onBackToDashboard={() => setIntroStep('sign-up')} />
+      }
+
+      return (
+        <DashStackTwentySix
+          formValues={loginForm}
+          rememberPassword={rememberPassword}
+          onFieldChange={updateLoginField}
+          onRememberChange={setRememberPassword}
+          onForgotPassword={() => setIntroStep('not-found')}
+          onCreateAccount={() => setIntroStep('sign-up')}
+          onSignIn={handleSignIn}
+        />
+      )
+    }
+
+    if (activePath === '/') {
+      return <DashboardContent stats={stats} />
+    }
+
+    if (ActivePageComponent) {
+      return <ActivePageComponent dashboardData={dashboardData} />
+    }
+
+    return <DashboardContent stats={stats} />
   }
 
   return (
     <div className="dashstack-shell">
-      <aside className="dashstack-sidebar">
-        <div className="dashstack-brand-row">
-          <div className="dashstack-logo-mark">D</div>
-          <h1>DashStack</h1>
-        </div>
-
-        <nav className="dashstack-menu">
-          <button
-            type="button"
-            onClick={() => handleTabChange('dashboard')}
-            className={`dashstack-menu-item ${isDashboard ? 'is-active' : ''}`}
-          >
-            Dashboard
-          </button>
-
-          {navItems.map((item) => (
-            <button key={item} type="button" className="dashstack-menu-item is-muted">
-              {item}
-            </button>
-          ))}
-
-          <div className="dashstack-menu-label">Pages</div>
-          {pageItems.map((item) => (
-            <button
-              key={item}
-              type="button"
-              onClick={() => handleTabChange(item)}
-              className={`dashstack-menu-item ${activeTab === item ? 'is-active' : 'is-muted'}`}
-            >
-              {item}
-            </button>
-          ))}
-
-          <div className="dashstack-menu-footer">
-            <button type="button" className="dashstack-menu-item is-muted">
-              Settings
-            </button>
-            <button type="button" className="dashstack-menu-item is-muted">
-              Logout
-            </button>
+      {!showOnboarding ? (
+        <aside className="dashstack-sidebar">
+          <div className="dashstack-brand-row">
+            <div className="dashstack-logo-mark">D</div>
+            <h1>DashStack</h1>
           </div>
-        </nav>
-      </aside>
+
+          <nav className="dashstack-menu">
+            <button
+              type="button"
+              onClick={() => handleTabChange('/')}
+              className={`dashstack-menu-item ${activePath === '/' ? 'is-active' : ''}`}
+            >
+              Dashboard
+            </button>
+            <div className="dashstack-menu-label">All DashStack Pages</div>
+            {dashstackSidebarItems.slice(1).map((item) => (
+              <button
+                key={item.path}
+                type="button"
+                onClick={() => handleTabChange(item.path)}
+                className={`dashstack-menu-item dashstack-menu-item-small ${activePath === item.path ? 'is-active' : 'is-muted'}`}
+              >
+                {item.label}
+              </button>
+            ))}
+          </nav>
+        </aside>
+      ) : null}
 
       <main className="dashstack-main-area">
-        <header className="dashstack-topbar">
-          <div className="dashstack-searchbar">
-            <span className="dashstack-search-icon">S</span>
-            <input type="text" placeholder="Search" />
-          </div>
-
-          <div className="dashstack-topbar-right">
-            <div className="dashstack-language">
-              <span className="dashstack-flag" />
-              <span>English</span>
+        {!showOnboarding ? (
+          <header className="dashstack-topbar">
+            <div className="dashstack-searchbar">
+              <span className="dashstack-search-icon">S</span>
+              <input type="text" placeholder="Search" />
             </div>
-            <div className="dashstack-profile">
-              <div className="dashstack-profile-avatar">MR</div>
-              <div>
-                <p>Moni Roy</p>
-                <small>Admin</small>
+
+            <div className="dashstack-topbar-right">
+              <div className="dashstack-language">
+                <span className="dashstack-flag" />
+                <span>English</span>
+              </div>
+              <div className="dashstack-profile">
+                <div className="dashstack-profile-avatar">MR</div>
+                <div>
+                  <p>Moni Roy</p>
+                  <small>Admin</small>
+                </div>
               </div>
             </div>
-          </div>
-        </header>
+          </header>
+        ) : null}
 
         <section className="dashstack-scroll-area">
-          <div className="dashstack-page-head">
-            <h2>{pageTitle}</h2>
-          </div>
-          {isDashboard ? <DashboardContent stats={stats} /> : <PlaceholderPage />}
+          {!showOnboarding ? (
+            <div className="dashstack-page-head">
+              <h2>{pageTitle}</h2>
+            </div>
+          ) : null}
+          {renderMainContent()}
         </section>
       </main>
     </div>

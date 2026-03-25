@@ -60,6 +60,13 @@
   font-size: 14px;
   font-weight: 700;
   color: #555f73;
+  cursor: pointer;
+}
+
+.dashstack-menu-item-small {
+  padding: 9px 12px;
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .dashstack-menu-item:hover {
@@ -615,6 +622,191 @@
   background: #ffffff;
 }
 
+.dashstack-auth-screen {
+  min-height: calc(100vh - 170px);
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.12) 0, rgba(255, 255, 255, 0.12) 58px, transparent 58px),
+    radial-gradient(circle at 85% 18%, rgba(255, 255, 255, 0.1) 0, rgba(255, 255, 255, 0.1) 72px, transparent 72px),
+    linear-gradient(135deg, #5b86ff 0%, #4b79f2 45%, #4f68ef 100%);
+}
+
+.dashstack-auth-card {
+  width: min(100%, 420px);
+  padding: 34px 28px 30px;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 28px 70px rgba(42, 76, 176, 0.2);
+}
+
+.dashstack-auth-card h3 {
+  margin: 0;
+  text-align: center;
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #232323;
+}
+
+.dashstack-auth-card p {
+  margin: 10px 0 28px;
+  text-align: center;
+  color: #8d93a6;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.dashstack-auth-form {
+  display: grid;
+  gap: 12px;
+}
+
+.dashstack-auth-form label {
+  color: #5b6171;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.dashstack-auth-form input {
+  width: 100%;
+  border: 1px solid #e7ebf3;
+  border-radius: 8px;
+  padding: 14px 16px;
+  background: #f4f7fc;
+  color: #2a3142;
+  outline: none;
+}
+
+.dashstack-auth-form input::placeholder {
+  color: #b4bccd;
+}
+
+.dashstack-auth-password-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.dashstack-auth-password-row button,
+.dashstack-auth-footer button {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #6a8cff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.dashstack-auth-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 4px 0 12px;
+}
+
+.dashstack-auth-check input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
+
+.dashstack-auth-check span {
+  color: #788094;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.dashstack-auth-submit {
+  width: 100%;
+  border: 0;
+  border-radius: 8px;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, #6790ff, #4d78f3);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 16px 28px rgba(92, 130, 255, 0.22);
+}
+
+.dashstack-auth-footer {
+  margin-top: 18px;
+  text-align: center;
+  color: #778095;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.dashstack-error-card {
+  display: grid;
+  gap: 26px;
+  justify-items: center;
+  padding-top: 42px;
+}
+
+.dashstack-error-window {
+  width: 190px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #3982ff;
+  box-shadow: 0 18px 40px rgba(79, 121, 242, 0.24);
+}
+
+.dashstack-error-window-top {
+  display: flex;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #cde7ff;
+}
+
+.dashstack-error-window-top span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #ff6d77;
+}
+
+.dashstack-error-window-top span:nth-child(2) {
+  background: #f7cf5e;
+}
+
+.dashstack-error-window-top span:nth-child(3) {
+  background: #7cc8ff;
+}
+
+.dashstack-error-code {
+  padding: 20px 0 16px;
+  text-align: center;
+  color: #ffaf38;
+  font-size: 74px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.06em;
+}
+
+.dashstack-error-window-bottom {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 16px 16px;
+}
+
+.dashstack-error-window-bottom span {
+  display: block;
+  width: 22px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.dashstack-error-card h3 {
+  font-size: 28px;
+}
+
 @media (max-width: 1180px) {
   .dashstack-stats-grid,
   .dashstack-bottom-grid {
@@ -660,5 +852,17 @@
 
   .dashstack-page-head h2 {
     font-size: 28px;
+  }
+
+  .dashstack-auth-card {
+    padding: 28px 20px 24px;
+  }
+
+  .dashstack-auth-card h3 {
+    font-size: 28px;
+  }
+
+  .dashstack-error-card h3 {
+    font-size: 24px;
   }
 }
