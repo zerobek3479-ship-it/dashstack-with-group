@@ -35,6 +35,10 @@ const Inbox = () => {
         </div>
       </aside>
 
+
+
+
+
       
       <main className="inbox__content">
         <header className="inbox__header">
